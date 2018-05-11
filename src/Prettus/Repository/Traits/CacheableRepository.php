@@ -122,11 +122,13 @@ trait CacheableRepository
     {
 
         $request = app('Illuminate\Http\Request');
+        $access_user_token=$request->get('access_user_token','');
+
         $args = serialize($args);
         $criteria = $this->serializeCriteria();
-        $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria . $request->fullUrl()));
+        $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria));
 
-        CacheKeys::putKey(get_called_class(), $key);
+        CacheKeys::putKey(get_called_class().$access_user_token, $key);
 
         return $key;
 
