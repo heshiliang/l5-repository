@@ -1,23 +1,23 @@
 {
-  "name": "prettus/l5-repository",
+  "name": "heshiliang/l5-repository",
   "description": "Laravel 5 - Repositories to  the database layer",
   "keywords": ["laravel", "repository", "eloquent", "model", "cache"],
   "license": "MIT",
   "authors": [
     {
-      "name": "Anderson Andrade",
+      "name": "heshiliang",
       "homepage": "http://andersonandra.de",
       "email": "contato@andersonandra.de",
       "role": "Developer"
     }
   ],
-  "homepage": "http://andersao.github.io/l5-repository",
+  "homepage": "http://heshiliang.github.io/l5-repository",
   "support": {
     "email": "contato@andersonandra.de",
-    "issues":"https://github.com/andersao/l5-repository/issues",
-    "wiki":"https://github.com/andersao/l5-repository",
-    "source":"https://github.com/andersao/l5-repository",
-    "docs": "http://andersao.github.io/l5-repository"
+    "issues":"https://github.com/heshiliang/l5-repository/issues",
+    "wiki":"https://github.com/heshiliang/l5-repository",
+    "source":"https://github.com/heshiliang/l5-repository",
+    "docs": "http://heshiliang.github.io/l5-repository"
   },
   "require": {
     "illuminate/http": "~5.0",
