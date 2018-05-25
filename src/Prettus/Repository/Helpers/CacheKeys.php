@@ -1,6 +1,9 @@
 <?php
 
 namespace Prettus\Repository\Helpers;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Support\Facades\Cache;
+
 
 /**
  * Class CacheKeys
@@ -11,14 +14,20 @@ class CacheKeys
 {
 
     /**
-     * @var string
+     * @var CacheRepository
      */
-    protected static $storeFile = "repository-cache-keys.json";
+    protected static $cache = null;
+
 
     /**
      * @var array
      */
     protected static $keys = null;
+
+    public function __construct()
+    {
+
+    }
 
     /**
      * @param $group
@@ -28,59 +37,40 @@ class CacheKeys
      */
     public static function putKey($group, $key)
     {
-        self::loadKeys();
+        self::$cache = app(config('repository.cache.repository', 'cache'));
 
-        self::$keys[$group] = self::getKeys($group);
+        self::loadKeys($group);
 
-        if (!in_array($key, self::$keys[$group])) {
-            self::$keys[$group][] = $key;
+        if (!in_array($key, self::$keys)) {
+            self::$keys[] = $key;
         }
-
-        self::storeKeys();
+        self::storeKeys($group);
     }
 
     /**
      * @return array|mixed
      */
-    public static function loadKeys()
+    public static function loadKeys($group)
     {
-        if (!is_null(self::$keys) && is_array(self::$keys)) {
-            return self::$keys;
-        }
+        self::$cache = app(config('repository.cache.repository', 'cache'));
 
-        $file = self::getFileKeys();
+        self::$keys=self::$cache->get($group);
 
-        if (!file_exists($file)) {
-            self::storeKeys();
-        }
-
-        $content = file_get_contents($file);
-        self::$keys = json_decode($content, true);
+        self::$keys=self::$keys?self::$keys:[];
 
         return self::$keys;
     }
 
     /**
-     * @return string
-     */
-    public static function getFileKeys()
-    {
-        $file = storage_path("framework/cache/" . self::$storeFile);
-
-        return $file;
-    }
-
-    /**
      * @return int
      */
-    public static function storeKeys()
+    public static function storeKeys($group)
     {
-        $file = self::getFileKeys();
-        self::$keys = is_null(self::$keys) ? [] : self::$keys;
-        $content = json_encode(self::$keys);
+        $cache1 = app('cache');
 
-        return file_put_contents($file, $content);
+        return self::$cache->put($group,  self::$keys,config('repository.cache.minutes', 1440));
     }
+
 
     /**
      * @param $group
@@ -89,10 +79,9 @@ class CacheKeys
      */
     public static function getKeys($group)
     {
-        self::loadKeys();
-        self::$keys[$group] = isset(self::$keys[$group]) ? self::$keys[$group] : [];
+        self::loadKeys($group);
 
-        return self::$keys[$group];
+        return self::$keys;
     }
 
     /**
