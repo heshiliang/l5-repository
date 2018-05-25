@@ -51,7 +51,7 @@ class CleanCacheRepository
     public function handle(RepositoryEventBase $event)
     {
         $request = app('Illuminate\Http\Request');
-        $access_user_token=$request->get('access_user_token','');
+        $redis_user_flag=$request->get('user_id','');
 
         try {
             $cleanEnabled = config("repository.cache.clean.enabled", true);
@@ -62,7 +62,7 @@ class CleanCacheRepository
                 $this->action = $event->getAction();
 
                 if (config("repository.cache.clean.on.{$this->action}", true)) {
-                    $cacheKeys = CacheKeys::getKeys(get_class($this->repository).$access_user_token);
+                    $cacheKeys = CacheKeys::getKeys(get_class($this->repository).$redis_user_flag);
 
                     if (is_array($cacheKeys)) {
                         foreach ($cacheKeys as $key) {

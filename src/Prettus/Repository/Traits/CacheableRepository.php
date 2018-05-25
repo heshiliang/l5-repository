@@ -122,13 +122,20 @@ trait CacheableRepository
     {
 
         $request = app('Illuminate\Http\Request');
-        $access_user_token=$request->get('access_user_token','');
+        $redis_user_flag=$request->get('user_id','');
 
         $args = serialize($args);
         $criteria = $this->serializeCriteria();
         $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria));
+        $withOutRedisUserFlag= isset($this->withOutRedisUserFlag) ? $this->withOutRedisUserFlag:false;
 
-        CacheKeys::putKey(get_called_class().$access_user_token, $key);
+        if (!$withOutRedisUserFlag) {
+            CacheKeys::putKey(get_called_class() . $redis_user_flag, $key);
+        }
+        else
+        {
+            CacheKeys::putKey(get_called_class(), $key);
+        }
 
         return $key;
 
