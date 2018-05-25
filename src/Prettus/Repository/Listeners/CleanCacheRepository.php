@@ -68,6 +68,8 @@ class CleanCacheRepository
                         foreach ($cacheKeys as $key) {
                             $this->cache->forget($key);
                         }
+
+                        $this->cache->forget(get_class($this->repository).$redis_user_flag);
                     }
                 }
             }
