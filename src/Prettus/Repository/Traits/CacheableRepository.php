@@ -126,8 +126,18 @@ trait CacheableRepository
 
         $args = serialize($args);
         $criteria = $this->serializeCriteria();
-        $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria));
+
         $withOutRedisUserFlag= isset($this->withOutRedisUserFlag) ? $this->withOutRedisUserFlag:false;
+
+        if (!$withOutRedisUserFlag) {
+
+            $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria.$redis_user_flag));
+        }
+        else
+        {
+            $key = sprintf('%s@%s-%s', get_called_class(), $method, md5($args . $criteria));
+
+        }
 
         if (!$withOutRedisUserFlag) {
             CacheKeys::putKey(get_called_class() . $redis_user_flag, $key);
